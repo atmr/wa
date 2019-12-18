@@ -1,0 +1,8 @@
+---
+- name: ntpd
+  hosts: vm
+  become: yes
+
+  tasks:
+  - name: Ping hosts
+    ping:
