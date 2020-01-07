@@ -1,8 +1,109 @@
 ---
-- name: ntpd
-  hosts: vm
+- name: acc-ssh
+  hosts: acc
   become: yes
+
+  roles:
+  - singleplatform-eng.users
 
   tasks:
   - name: Ping hosts
     ping:
+
+  - command: /bin/cat /home/lab/.ssh/id_rsa.pub
+    register: lab_ssh_pub
+
+#  - debug:
+#      var: lab_ssh_pub.stdout
+
+  - set_fact: LAB_SSH_PUB_VM1="{{ lab_ssh_pub }}"
+
+  - command: /bin/cat /home/labsudo/.ssh/id_rsa.pub
+    register: labsudo_ssh_pub
+
+#  - debug:
+#      var: labsudo_ssh_pub.stdout
+
+  - set_fact: LABSUDO_SSH_PUB_VM1="{{ labsudo_ssh_pub }}"
+
+- name: vm-ssh
+  hosts: vm
+  become: yes
+
+  vars:
+    labsshpub: "{{ hostvars['vm1']['LAB_SSH_PUB_VM1']}}"
+    labsudosshpub: "{{ hostvars['vm1']['LABSUDO_SSH_PUB_VM1']}}"
+
+  tasks:
+  - name: Ping hosts
+    ping:
+
+  roles:
+    - singleplatform-eng.users
+
+# all hosts install and configure ntp via role
+- name: ntpd and logrotate
+  hosts: all
+  become: yes
+
+  vars:
+    logrotate_scripts:
+    - name: apache2
+      path: /var/log/apache2/*.log
+      options:
+        - daily
+        - weekly
+        - rotate 14
+        - missingok
+        - compress
+        - delaycompress
+        - notifempty
+        - create 640 root adm
+        - sharedscripts
+      scripts:
+        postrotate: "if invoke-rc.d apache2 status > /dev/null 2>&1; then invoke-rc.d apache2 reload > /dev/null 2>&1; fi;"
+        prerotate: "if [ -d /etc/logrotate.d/httpd-prerotate ]; then run-parts /etc/logrotate.d/httpd-prerotate; fi;"
+
+    - name: syslog
+      path: /var/log/syslog
+      options:
+        - rotate 7
+        - daily
+        - missingok
+        - notifempty
+        - delaycompress
+        - compress
+      scripts:
+        postrotate: "/usr/lib/rsyslog/rsyslog-rotate"
+
+  roles:
+    - geerlingguy.git
+    - nickhammond.logrotate
+    - role: geerlingguy.ntp
+      vars:
+        ntp_timezone: Europe/Kiev
+        ntp_manage_config: true
+        ntp_servers:
+          - "192.168.88.1 iburst"
+
+- name: frontend
+  hosts: vm2
+  become: yes
+
+  tasks:
+  - name: install nginx latest
+    apt:
+      name: nginx
+      state: latest
+      update_cache: yes
+
+- name: backend
+  hosts: vm3
+  become: yes
+
+  tasks:
+  - name: install php-fpm latest
+    apt:
+      name: php-fpm
+      state: latest
+      update_cache: yes
