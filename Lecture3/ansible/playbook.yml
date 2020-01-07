@@ -1,5 +1,5 @@
 ---
-- name: acc-ssh
+- name: create users and generate ssh key in acc host
   hosts: acc
   become: yes
 
@@ -26,7 +26,7 @@
 
   - set_fact: LABSUDO_SSH_PUB_VM1="{{ labsudo_ssh_pub }}"
 
-- name: vm-ssh
+- name: create users and copy ssh key in vm[2-3] hosts
   hosts: vm
   become: yes
 
