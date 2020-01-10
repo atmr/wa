@@ -1,5 +1,4 @@
-# wa
-WebACDM
+# WebACDM
 
 == Lecture3 ==
 
@@ -10,3 +9,4 @@ ansible-galaxy install geerlingguy.git
 ansible-galaxy install singleplatform-eng.users
 ansible-galaxy install nickhammond.logrotate
 ```
+
