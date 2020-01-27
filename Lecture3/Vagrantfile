@@ -82,54 +82,55 @@ Vagrant.configure("2") do |config|
   #config.vm.network "public_network", bridge: "enp1s0"
 
   config.vm.define "vm1" do |vm1|
-    vm1.vm.box = "hashicorp/bionic64"
-    #vm1.vm.box = "../../../packer/bento/builds/ubuntu-18.04.virtualbox.box"
-
+    vm1.vm.box = "ubuntu/bionic64"
     vm1.vm.hostname = "vm1"
     vm1.vm.network "private_network", ip: "192.168.56.241"
-
+    
     vm1.vm.provider :virtualbox do |v|
-      v.customize ["modifyvm", :id, "--memory", 512]
-      v.customize ["modifyvm", :id, "--name", "vm1"]
+      v.customize [
+          "modifyvm", :id, 
+          "--nictype1", "virtio", 
+          "--nictype2", "virtio",
+          "--memory", "1024",
+          "--name", "vm1"
+      ]
     end
 
     vm1.vm.synced_folder "./", "/home/vagrant/workdir", disabled: false
-
-    vm1.vm.provision "shell", inline: <<-SHELL
-      apt-get update -yq
-      apt-get install -yq python-pip tree mc fping
-      pip install ansible
-    SHELL
+    vm1.vm.provision "shell", path: "install.sh", privileged: false
   end
 
   config.vm.define "vm2" do |vm2|
-    vm2.vm.box = "hashicorp/bionic64"
+    vm2.vm.box = "ubuntu/bionic64"
     vm2.vm.hostname = "vm2"
     vm2.vm.network "private_network", ip: "192.168.56.242"
 
     vm2.vm.provider :virtualbox do |v|
-#      v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-#      v.customize ["modifyvm", :id, "--nic1", "bridged"]
-#      v.customize ["modifyvm", :id, "--bridgeadapter1", "eth0"]
-      v.customize ["modifyvm", :id, "--memory", 512]
-      v.customize ["modifyvm", :id, "--name", "vm2"]
+      v.customize [          
+          "modifyvm", :id, 
+          "--nictype1", "virtio", 
+          "--nictype2", "virtio",
+          "--memory", "1024",
+          "--name", "vm2"
+      ]
     end
 
     vm2.vm.synced_folder ".", "/vagrant", disabled: true
   end
 
   config.vm.define "vm3" do |vm3|
-    vm3.vm.box = "hashicorp/bionic64"
+    vm3.vm.box = "ubuntu/bionic64"
     vm3.vm.hostname = "vm3"
     vm3.vm.network "private_network", ip: "192.168.56.243"
 
     vm3.vm.provider :virtualbox do |v|
-#      v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-#      v.customize ["modifyvm", :id, "--nic1", "bridged"]
-#      v.customize ["modifyvm", :id, "--bridgeadapter1", "eth0"]
-      v.customize ["modifyvm", :id, "--memory", 512]
-      v.customize ["modifyvm", :id, "--name", "vm3"]
+      v.customize [          
+          "modifyvm", :id, 
+          "--nictype1", "virtio", 
+          "--nictype2", "virtio",
+          "--memory", "1024",
+          "--name", "vm3"
+      ]
     end
   end
-
 end
