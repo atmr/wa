@@ -98,6 +98,19 @@ Vagrant.configure("2") do |config|
 
     vm1.vm.synced_folder "./", "/home/vagrant/workdir", disabled: false
     vm1.vm.provision "shell", path: "install.sh", privileged: false
+    
+#    vm1.vm.provision "ansible_local" do |ansible|
+#        ansible.playbook = "/home/vagrant/workdir/ansible/playbook.yml"
+#        ansible.become = true
+#        ansible.verbose        = true  
+#        ansible.limit          = "all"
+#        ansible.config_file    = "/home/vagrant/workdir/ansible/ansible.cfg"
+#	    ansible.galaxy_role_file = "requirements.yml"
+#        ansible.galaxy_roles_path = "/home/vagrant/.ansible/roles"
+#        ansible.inventory_path = "/home/vagrant/workdir/ansible/inventory.ini"
+#       ansible.galaxy_command = "sudo ansible-galaxy install --role-file=%{role_file} --roles-path=%{roles_path} --force"
+#    end
+
   end
 
   config.vm.define "vm2" do |vm2|

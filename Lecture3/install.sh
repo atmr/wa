@@ -6,9 +6,8 @@ sudo pip install ansible
 
 ansible-galaxy install geerlingguy.ntp --roles-path /home/vagrant/.ansible/roles --force && \
 ansible-galaxy install geerlingguy.git --roles-path /home/vagrant/.ansible/roles --force && \
-ansible-galaxy install singleplatform-eng.users --roles-path /home/vagrant/.ansible/roles  --force && \
+ansible-galaxy install singleplatform-eng.users --roles-path /home/vagrant/.ansible/roles --force && \
 ansible-galaxy install nickhammond.logrotate --roles-path /home/vagrant/.ansible/roles --force
 
-echo "ANSIBLE_HOST_KEY_CHECKING=False" >>  ~/.bash_login
+cd /home/vagrant/workdir/ansible/ && ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook playbook.yml
 
-echo "ANSIBLE_HOST_KEY_CHECKING=False" >>  ~/.bash_profile
