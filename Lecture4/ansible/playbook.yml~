@@ -53,5 +53,5 @@
         image: "{{ default_container_image }}"
         command: "{{ default_container_command }}"
         restart: yes
-        state: started        
+        state: present
       with_sequence: count={{ create_containers }}
