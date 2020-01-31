@@ -4,14 +4,20 @@
   hosts: all
   become: true
 
+  vars:
+    create_containers: 3
+    default_container_name: docker
+    default_container_image: ubuntu
+    default_container_command: sleep 1d
+  
   tasks:
     - name: Run the equivalent of "apt-get update" as a separate step
       apt:
         update_cache: yes
 
-    - name: Install required system packages
-      apt: name={{ item }} state=latest update_cache=yes
-      loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python-pip', 'python3-pip', 'virtualenv', 'python-setuptools']
+#    - name: Install required system packages
+#      apt: name={{ item }} state=latest update_cache=yes
+#      loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python-pip', 'python3-pip', 'virtualenv', 'python-setuptools']
 
     - name: Add Docker GPG apt Key
       apt_key:
@@ -29,18 +35,7 @@
     - name: Install Docker Module for Python
       pip:
         name: docker
-
-- name: Run docker container
-  hosts: vm
-  become: true
-
-  vars:
-    create_containers: 2
-    default_container_name: docker
-    default_container_image: ubuntu
-    default_container_command: sleep 1d
-  
-  tasks:
+#        executable: pip
         
     - name: Pull default Docker image
       docker_image:
@@ -52,6 +47,14 @@
         name: "{{ default_container_name }}{{ item }}"
         image: "{{ default_container_image }}"
         command: "{{ default_container_command }}"
+        volumes: 
+          - /home/vagrant/workdir/ansible/docker:/volume
         restart: yes
         state: started        
+      with_sequence: count={{ create_containers }}
+
+      
+      
+    - name: Execute command inside a container
+      shell: "docker exec {{ default_container_name }}{{ item }} /volume/indocker.sh"
       with_sequence: count={{ create_containers }}

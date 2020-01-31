@@ -1,2 +1,5 @@
 .vagrant
 machines
+*~
+*kate-swp
+*log
