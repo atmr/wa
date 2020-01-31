@@ -66,9 +66,9 @@
 #  private_ssh_port: 22
 #  default_ip: 127.0.0.1
 
-hosts:
-  - host: tcp://192.168.56.242:2375
-    private_ssh_port: 22
-    default_ip: 192.168.56.242
+#hosts:
+#  - host: tcp://10.45.5.16:4243
+#    private_ssh_port: 2022
+#    default_ip: 172.16.3.45
 #  - host: tcp://localhost:4243
 #    private_ssh_port: 2029

@@ -101,10 +101,10 @@ Vagrant.configure("2") do |config|
     vm1.vm.provision "shell", privileged: false, inline: <<-SHELL
       sudo apt-get update -yq
       sudo apt-get install -yq python-pip tree mc fping
-      sudo pip install ansible
-      cd /home/vagrant/workdir/ansible && \
-      wget -qN https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/docker.py && \
-      wget -qN https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/docker.yml
+      sudo pip install ansible docker-py
+      #cd /home/vagrant/workdir/ansible && \
+      #wget -qN https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/docker.py && \
+      #wget -qN https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/docker.yml
     SHELL
   end
 

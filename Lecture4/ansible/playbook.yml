@@ -3,7 +3,13 @@
 - name: Run docker container
   hosts: all
   become: true
-
+  
+  vars:
+    create_containers: 3
+    default_container_name: docker
+    default_container_image: ubuntu
+    default_container_command: sleep 1d
+  
   tasks:
     - name: Run the equivalent of "apt-get update" as a separate step
       apt:
@@ -29,18 +35,6 @@
     - name: Install Docker Module for Python
       pip:
         name: docker
-
-- name: Run docker container
-  hosts: vm
-  become: true
-
-  vars:
-    create_containers: 2
-    default_container_name: docker
-    default_container_image: ubuntu
-    default_container_command: sleep 1d
-  
-  tasks:
         
     - name: Pull default Docker image
       docker_image:
