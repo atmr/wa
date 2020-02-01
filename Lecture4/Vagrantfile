@@ -98,37 +98,7 @@ Vagrant.configure("2") do |config|
 
     vm1.vm.synced_folder "./", "/home/vagrant/workdir", disabled: false
 
-    vm1.vm.provision "shell", privileged: false, inline: <<-SHELL
-      sudo apt-get update -yq
-      sudo apt-get install -yq python-pip tree mc fping
-      sudo pip install ansible docker-py
-      #cd /home/vagrant/workdir/ansible && \
-      #wget -qN https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/docker.py && \
-      #wget -qN https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/docker.yml
-    SHELL
+    vm1.vm.provision "shell", path: "install.sh", privileged: false
+
   end
-
-  config.vm.define "vm2" do |vm2|
-    vm2.vm.box = "ubuntu/bionic64"
-    vm2.vm.hostname = "vm2"
-    vm2.vm.network "private_network", ip: "192.168.56.242"
-
-    vm2.vm.provider :virtualbox do |v|
-      v.customize [
-          "modifyvm", :id,
-          "--nictype1", "virtio",
-          "--nictype2", "virtio",
-          "--memory", "1024",
-          "--name", "vm2"
-      ]
-    end
-
-    vm2.vm.provision "shell", privileged: false, inline: <<-SHELL
-      sudo apt-get update -yq
-      sudo apt-get install -yq python-pip tree mc fping
-    SHELL
-
-    vm2.vm.synced_folder ".", "/vagrant", disabled: true
-  end
-
 end

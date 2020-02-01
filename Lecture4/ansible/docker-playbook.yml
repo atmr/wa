@@ -1,0 +1,17 @@
+---
+- name: Test dynamic inventory for docker
+  hosts: all
+  become: yes
+
+  tasks:
+  - name: Ping docker containers
+    ping:
+
+  - name: install nginx latest
+    apt:
+      name: nginx
+      state: latest
+      update_cache: yes
+
+  - name: Show disk size
+    shell: df -h

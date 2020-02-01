@@ -1,2 +1,7 @@
 .vagrant
-machines
+machines/
+*~
+*.~
+*kate-swp
+*.log
+authorized_keys
