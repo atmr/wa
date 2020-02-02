@@ -5,3 +5,4 @@ machines/
 *kate-swp
 *.log
 authorized_keys
+.ssh/

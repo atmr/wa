@@ -23,14 +23,15 @@ def get_host_vars(m):
     home = expanduser("~")
     ip = [docker_inspect("{{.NetworkSettings.IPAddress}}", m)]
 
-    publishedPort = docker_port(m)
+#    publishedPort = docker_port(m)
+    publishedPort = "22"
 
     ssh_vars = {
         "ansible_port": publishedPort,
 #        "ansible_private_key_file": home+ "/.ssh/" + "id_rsa",
 #        "ansible_private_key_file": home+ "/.ssh/" + "private_key",
         "ansible_user": "vagrant",
-        "ansible_become_user": "vagrant",
+#        "ansible_become_user": "vagrant",
         "ansible_become_password": "vagrant",
     }
 
