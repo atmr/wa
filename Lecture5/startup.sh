@@ -13,3 +13,10 @@ vagrant up --no-provision vm1
 cp .vagrant/machines/vm1/virtualbox/private_key  machines/vm1/private_key
 
 vagrant provision vm1
+
+echo " ****************************************************************"
+echo " ******** 	[   Playbook launch   ] 		*******"
+echo " ****************************************************************"
+
+vagrant ssh vm1 -c "cd /home/vagrant/workdir/ansible/ && sudo ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook main-playbook.yml"
+

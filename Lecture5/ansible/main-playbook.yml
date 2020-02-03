@@ -1,6 +1,6 @@
 ---
 - name: create users and generate ssh key in acc host
-  hosts: acc
+  hosts: ACC
   become: yes
 
   roles:
@@ -27,7 +27,7 @@
   - set_fact: LABSUDO_SSH_PUB_VM1="{{ labsudo_ssh_pub }}"
 
 - name: create users and copy ssh key in vm[2-3] hosts
-  hosts: vm
+  hosts: VM
   become: yes
 
   vars:
@@ -87,18 +87,25 @@
           - "192.168.88.1 iburst"
 
 - name: frontend
-  hosts: frontend
+  hosts: FRONTEND
   become: yes
 
   tasks:
   - name: Install required system packages
     apt: name={{ item }} state=latest update_cache=yes
-    loop: [ 'nginx', 'php-fpm']
+    loop: [ 'apache2', 'php-fpm']
 
 - name: backend
-  hosts: backend
+  hosts: BACKEND
   become: yes
 
   tasks:
   - name: ping
     ping:
+
+  roles:
+  - role: geerlingguy.java
+    when: ansible_os_family == 'Debian'
+    java_packages:
+       - openjdk-8-jdk
+  - nexus3-oss

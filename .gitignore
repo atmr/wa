@@ -6,3 +6,4 @@ machines/
 *.log
 authorized_keys
 .ssh/
+roles/

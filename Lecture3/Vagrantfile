@@ -85,7 +85,6 @@ Vagrant.configure("2") do |config|
     vm1.vm.box = "ubuntu/bionic64"
     vm1.vm.hostname = "vm1"
     vm1.vm.network "private_network", ip: "192.168.56.241"
-    
     vm1.vm.provider :virtualbox do |v|
       v.customize [
           "modifyvm", :id, 
@@ -95,10 +94,8 @@ Vagrant.configure("2") do |config|
           "--name", "vm1"
       ]
     end
-
     vm1.vm.synced_folder "./", "/home/vagrant/workdir", disabled: false
     vm1.vm.provision "shell", path: "install.sh", privileged: false
-
 #    vm1.vm.provision "ansible_local" do |ansible|
 #        ansible.playbook = "/home/vagrant/workdir/ansible/playbook.yml"
 #        ansible.become = true
@@ -110,14 +107,12 @@ Vagrant.configure("2") do |config|
 #        ansible.inventory_path = "/home/vagrant/workdir/ansible/inventory.ini"
 #       ansible.galaxy_command = "sudo ansible-galaxy install --role-file=%{role_file} --roles-path=%{roles_path} --force"
 #    end
-
   end
 
   config.vm.define "vm2" do |vm2|
     vm2.vm.box = "ubuntu/bionic64"
     vm2.vm.hostname = "vm2"
     vm2.vm.network "private_network", ip: "192.168.56.242"
-
     vm2.vm.provider :virtualbox do |v|
       v.customize [
           "modifyvm", :id,
@@ -127,7 +122,6 @@ Vagrant.configure("2") do |config|
           "--name", "vm2"
       ]
     end
-
     vm2.vm.synced_folder ".", "/vagrant", disabled: true
   end
 
@@ -135,7 +129,6 @@ Vagrant.configure("2") do |config|
     vm3.vm.box = "ubuntu/bionic64"
     vm3.vm.hostname = "vm3"
     vm3.vm.network "private_network", ip: "192.168.56.243"
-
     vm3.vm.provider :virtualbox do |v|
       v.customize [
           "modifyvm", :id,

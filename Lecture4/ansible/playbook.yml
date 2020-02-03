@@ -52,6 +52,6 @@
         state: started
       with_sequence: count={{ create_containers }}
 
-    - name: Execute command inside a containers (ssh and sudo to ansible access)
+    - name: Execute command inside a containers (ssh and sudo for ansible connect)
       shell: "docker exec {{ default_container_name }}{{ item }} /volume/indocker.sh"
       with_sequence: count={{ create_containers }}

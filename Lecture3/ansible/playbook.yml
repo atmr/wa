@@ -1,6 +1,6 @@
 ---
 - name: create users and generate ssh key in acc host
-  hosts: acc
+  hosts: ACC
   become: yes
 
   roles:
@@ -27,7 +27,7 @@
   - set_fact: LABSUDO_SSH_PUB_VM1="{{ labsudo_ssh_pub }}"
 
 - name: create users and copy ssh key in vm[2-3] hosts
-  hosts: vm
+  hosts: VM
   become: yes
 
   vars:
@@ -87,23 +87,18 @@
           - "192.168.88.1 iburst"
 
 - name: frontend
-  hosts: vm2
+  hosts: FRONTEND
   become: yes
 
   tasks:
-  - name: install nginx latest
-    apt:
-      name: nginx
-      state: latest
-      update_cache: yes
+  - name: Install required system packages
+    apt: name={{ item }} state=latest update_cache=yes
+    loop: [ 'apache2', 'php-fpm']
 
 - name: backend
-  hosts: vm3
+  hosts: BACKEND
   become: yes
 
   tasks:
-  - name: install php-fpm latest
-    apt:
-      name: php-fpm
-      state: latest
-      update_cache: yes
+  - name: ping
+    ping:

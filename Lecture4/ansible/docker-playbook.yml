@@ -13,8 +13,9 @@
       state: latest
       update_cache: yes
 
-#  - name: Installs nginx web server
-#    apt: pkg=nginx state=installed update_cache=yes
-
   - name: Show disk size
     shell: df -h
+    register: DF
+
+  - debug: msg="{{ DF.stdout_lines }}"
+
