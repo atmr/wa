@@ -202,7 +202,7 @@ nexus_local_users:
   - username: jenkins # used as key to update
     first_name: Jenkins
     last_name: CI
-    email: support@company.com
+    email: support@example.com
     password: "s3cr3t"
     roles:
       - Developpers # role ID here
@@ -403,6 +403,7 @@ nexus_repos_apt_proxy: []
 
 _nexus_privilege_defaults:
   type: repository-view
-  format: maven2
+#  format: maven2
+  format: docker
   actions:
     - read

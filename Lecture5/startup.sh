@@ -22,7 +22,4 @@ echo " ****************************************************************"
 echo " ******** 	[   Playbook launch   ] 		*******"
 echo " ****************************************************************"
 
-vagrant ssh vm1 -c "cd /home/vagrant/workdir/ansible/ && sudo ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook docker.yml"
-
-vagrant ssh vm1 -c "cd /home/vagrant/workdir/ansible/ && sudo ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook main-playbook.yml"
-
+vagrant ssh vm1 -c "cd /home/vagrant/workdir/ansible/ && sudo ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook main-playbook.yml -vv"

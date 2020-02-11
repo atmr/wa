@@ -63,9 +63,9 @@
   with_items:
     - name: default
     - name: "{{ nexus_blob_names.raw.blob }}"
-#    - name: "{{ nexus_blob_names.pypi.blob }}"
+    - name: "{{ nexus_blob_names.pypi.blob }}"
     - name: "{{ nexus_blob_names.docker.blob }}"
-#    - name: "{{ nexus_blob_names.ruby.blob }}"
+    - name: "{{ nexus_blob_names.ruby.blob }}"
     - name: "{{ nexus_blob_names.bower.blob }}"
     - name: "{{ nexus_blob_names.npm.blob }}"
     - name: "{{ nexus_blob_names.nuget.blob }}"
