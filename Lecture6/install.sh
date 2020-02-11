@@ -10,4 +10,5 @@ ansible-galaxy install singleplatform-eng.users --roles-path /home/vagrant/workd
 ansible-galaxy install nickhammond.logrotate --roles-path /home/vagrant/workdir/ansible/roles --force && \
 ansible-galaxy install geerlingguy.java --roles-path /home/vagrant/workdir/ansible/roles --force  && \
 ansible-galaxy install geerlingguy.apache --roles-path /home/vagrant/workdir/ansible/roles --force   && \
-ansible-galaxy install ansible-thoteam.nexus3-oss --roles-path /home/vagrant/workdir/ansible/roles --force
+ansible-galaxy install ansible-thoteam.nexus3-oss --roles-path /home/vagrant/workdir/ansible/roles --force   && \
+ansible-galaxy install cloudalchemy.prometheus  --roles-path /home/vagrant/workdir/ansible/roles --force

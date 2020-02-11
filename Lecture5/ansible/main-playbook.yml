@@ -1,5 +1,6 @@
 ---
-- name: create users and generate ssh key in acc host
+################################################################################
+- name: Create users and generate ssh key in acc host
   hosts: ACC
   become: yes
 
@@ -10,29 +11,10 @@
   - name: Ping hosts
     ping:
 
-  - command: /bin/cat /home/lab/.ssh/id_rsa.pub
-    register: lab_ssh_pub
-
-#  - debug:
-#      var: lab_ssh_pub.stdout
-
-  - set_fact: LAB_SSH_PUB_VM1="{{ lab_ssh_pub }}"
-
-  - command: /bin/cat /home/labsudo/.ssh/id_rsa.pub
-    register: labsudo_ssh_pub
-
-#  - debug:
-#      var: labsudo_ssh_pub.stdout
-
-  - set_fact: LABSUDO_SSH_PUB_VM1="{{ labsudo_ssh_pub }}"
-
+################################################################################
 - name: create users and copy ssh key in vm[2-3] hosts
   hosts: VM
   become: yes
-
-  vars:
-    labsshpub: "{{ hostvars['vm1']['LAB_SSH_PUB_VM1']}}"
-    labsudosshpub: "{{ hostvars['vm1']['LABSUDO_SSH_PUB_VM1']}}"
 
   tasks:
   - name: Ping hosts
@@ -41,6 +23,43 @@
   roles:
     - singleplatform-eng.users
 
+################################################################################
+- name: Create users and generate ssh key in acc host
+  hosts: all
+  become: yes
+
+  vars:
+    users:
+      - lab
+      - labsudo
+
+  tasks:
+  - name: fetch local ssh key from lab user
+    shell: cat /home/{{ item }}/.ssh/id_rsa.pub
+    register: ssh_keys
+    changed_when: false
+    run_once: true
+    delegate_to: vm1
+    with_items: "{{ users }}"
+
+  - name: Set authorized key took from file
+    authorized_key:
+      user: "{{ item.item }}"
+      state: present
+      key:  "{{ item.stdout }}"
+    with_items: "{{ ssh_keys.results }}"
+
+  - name: Validate the sudoers file before saving
+    lineinfile:
+      path: /etc/sudoers.d/labsudo
+      line: 'labsudo ALL=(ALL) NOPASSWD: ALL'
+      create: yes
+      validate: /usr/sbin/visudo -cf %s
+      owner: root
+      group: root
+      mode: '0440'
+
+################################################################################
 # all hosts install and configure ntp via role
 - name: ntpd and logrotate
   hosts: all
@@ -86,6 +105,10 @@
         ntp_servers:
           - "192.168.88.1 iburst"
 
+  tasks:
+    - include_tasks: docker.yml
+
+################################################################################
 - name: frontend
   hosts: FRONTEND
   become: yes
@@ -95,6 +118,7 @@
     apt: name={{ item }} state=latest update_cache=yes
     loop: [ 'apache2', 'php-fpm']
 
+################################################################################
 - name: backend
   hosts: BACKEND
   become: yes
@@ -104,10 +128,78 @@
     ping:
 
   roles:
+
   - role: geerlingguy.java
     when: ansible_os_family == 'Debian'
     java_packages:
        - openjdk-8-jdk
-  # Debian/Ubuntu only
-  - { role: geerlingguy.apache, apache_create_vhosts: no, apache_mods_enabled: ["proxy.load", "proxy_http.load", "headers.load", "rewrite.load", "ssl.load" ], apache_remove_default_vhost: true, tags: ["geerlingguy.apache"] }
-  - nexus3
+
+  - role: geerlingguy.apache
+    vars:
+      apache_create_vhosts: no
+      apache_mods_enabled:
+        - proxy.load
+        - proxy_http.load
+        - headers.load
+        - rewrite.load
+        - ssl.load
+      apache_remove_default_vhost: true
+
+  - role: ansible-thoteam.nexus3-oss
+    vars:
+      nexus_default_admin_password: 'admin123'
+      nexus_admin_password: 'admin1234'
+      nexus_anonymous_access: false
+      nexus_anonymous_access: true
+      nexus_public_hostname: 'nexus.example.com'
+      nexus_public_scheme: https
+      nexus_email_from_address: "nexus@nexus.example.com"
+      httpd_setup_enable: true
+      httpd_default_admin_email: "admin@example.com"
+#      httpd_ssl_certificate_file: 'files/nexus.example.com.crt'
+#      httpd_ssl_certificate_key_file: 'files/nexus.example.com.key'
+#      httpd_ssl_certificate_chain_file: "{{ httpd_ssl_certificate_file }}"
+      httpd_copy_ssl_files: false
+      httpd_ssl_cert_file_location: "/vagrant/certs/nexus.example.com.crt"
+      httpd_ssl_cert_key_location: "/vagrant/certs/nexus.example.com.key"
+      httpd_ssl_cert_chain_file_location: "{{ httpd_ssl_cert_file_location }}"
+      nexus_config_pypi: false
+      nexus_config_docker: true
+      nexus_config_raw: false
+      nexus_config_rubygems: false
+      nexus_config_bower: false
+      nexus_config_npm: false
+      nexus_config_nuget: false
+      nexus_config_gitlfs: false
+      nexus_config_yum: false
+      nexus_config_apt: false
+      nexus_local_users:
+        - username: jenkins # used as key to update
+          first_name: Jenkins
+          last_name: CI
+          email: support@example.com
+          password: "s3cr3t"
+          roles:
+            - developers # role ID here
+      nexus_delete_default_repos: true
+      nexus_delete_default_blobstore: false
+      nexus_blob_split: true     # True - blobstores per format
+      nexus_blob_names:           # Splited blob name list @ blob_vars.yml
+        docker:
+          blob: 'default'
+      nexus_privileges:
+        - name: all-repos-read # used as key to update a privilege
+        # type: <one of application, repository-admin, repository-content-selector, repository-view, script or wildcard>
+          description: 'Read & Browse access to all repos'
+          repository: '*'
+          actions: # can be add, browse, create, delete, edit, read or  * (all)
+            - read
+            - browse
+        # pattern: pattern
+        # domain: domain
+        # script_name: name
+      _nexus_privilege_defaults:
+        type: repository-view
+        format: docker
+        actions:
+          - read

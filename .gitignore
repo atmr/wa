@@ -6,3 +6,6 @@ machines/
 *.log
 authorized_keys
 .ssh/
+roles/
+!nexus3/
+certs/

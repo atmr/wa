@@ -8,6 +8,7 @@
 Use  ansible-docker-dynamic-inventory script
 https://github.com/tektutor/ansible-docker-dynamic-inventory
 
+```
 vagrant@vm1:~/workdir/ansible$ sudo ./dynamic_inventory.py
 {
     "4d96d496792f": {
@@ -44,3 +45,4 @@ vagrant@vm1:~/workdir/ansible$ sudo ./dynamic_inventory.py
         }
     }
 }
+```

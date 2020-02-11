@@ -8,8 +8,7 @@ Nexus3
 https://nexus.example.com
 
 login: admin
-pass: admin123
 
+pass: admin1234
 
 ./startup.sh
-

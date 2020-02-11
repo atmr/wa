@@ -7,17 +7,15 @@
 #    home: /local/home/foo
     profile: |
       alias ll='ls -lah'
-    ssh_key:
-       - "{{ labsshpub.stdout }}"
+    ssh_key: []
 #      - "ssh-rsa AAAAA.... foo@machine"
 
   - username: labsudo
     name: LabSudo user
-    groups: ['sudo']
+    groups: ['sudo', 'adm']
 #    uid: 1001
 #    home: /local/home/foo
     profile: |
       alias ll='ls -lah'
-    ssh_key:
-       - "{{ labsudosshpub.stdout }}"
+    ssh_key: []
 #      - "ssh-rsa AAAAA.... foo@machine"
