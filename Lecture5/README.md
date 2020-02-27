@@ -8,6 +8,11 @@ Nexus3
 https://nexus.example.com
 
 login: admin
+<<<<<<< HEAD
+=======
+
+pass: admin123
+>>>>>>> af3faa99e4f2528ad6327c8b9a856731c2d01f75
 
 pass: admin1234
 

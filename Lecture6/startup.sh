@@ -2,10 +2,6 @@
 
 mkdir -p machines/vm{1..3}
 
-mkdir -p certs
-./ssl.sh
-cp -fr certs/* ansible/roles/nexus3/files/
-
 vagrant up vm3
 vagrant up vm2
 
