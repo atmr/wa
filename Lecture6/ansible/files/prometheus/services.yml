@@ -1,0 +1,4 @@
+- targets: ['192.168.56.243:9184']
+  labels:
+    job: 'nexus'
+    instance: vm3

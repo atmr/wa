@@ -106,7 +106,8 @@
           - "192.168.88.1 iburst"
 
   tasks:
-    - include_tasks: docker.yml
+    - include_tasks: files/tasks/docker.yml
+    - include_tasks: files/tasks/prometheus-node-exporter.yml
 
 ################################################################################
 - name: frontend
@@ -118,6 +119,31 @@
     apt: name={{ item }} state=latest update_cache=yes
     loop: [ 'apache2', 'php-fpm']
 
+  - name: Copy directory to the remote server
+    copy:
+      src: /home/vagrant/workdir/ansible/files/prometheus/{{item}}
+      dest: /etc/prometheus/file_sd
+    with_items:
+      ['nodes.yml','services.yml']
+
+  roles:
+  - role: cloudalchemy.prometheus
+    vars:
+      prometheus_scrape_configs:
+        - job_name: "prometheus"
+          metrics_path: "{{ prometheus_metrics_path }}"
+          static_configs:
+            - targets:
+                - "{{ ansible_fqdn | default(ansible_host) | default('localhost') }}:9090"
+        - job_name: "nodes"
+          file_sd_configs:
+            - files:
+                - "{{ prometheus_config_dir }}/file_sd/nodes.yml"
+        - job_name: "services"
+          file_sd_configs:
+            - files:
+                - "{{ prometheus_config_dir }}/file_sd/services.yml"
+
 ################################################################################
 - name: backend
   hosts: BACKEND
@@ -126,6 +152,20 @@
   tasks:
   - name: ping
     ping:
+
+  - name: Restart a container
+    docker_container:
+      name: nexus-exporter
+      image: ocadotechnology/nexus-exporter
+      state: started
+      restart: yes
+      network_mode: host
+      ports:
+        - "9184:9184"
+      env:
+        NEXUS_HOST: http://localhost:8081
+        NEXUS_USERNAME: admin
+        NEXUS_ADMIN_PASSWORD: admin1234
 
   roles:
 
@@ -149,16 +189,12 @@
     vars:
       nexus_default_admin_password: 'admin123'
       nexus_admin_password: 'admin1234'
-      nexus_anonymous_access: false
       nexus_anonymous_access: true
       nexus_public_hostname: 'nexus.example.com'
       nexus_public_scheme: https
       nexus_email_from_address: "nexus@nexus.example.com"
       httpd_setup_enable: true
       httpd_default_admin_email: "admin@example.com"
-#      httpd_ssl_certificate_file: 'files/nexus.example.com.crt'
-#      httpd_ssl_certificate_key_file: 'files/nexus.example.com.key'
-#      httpd_ssl_certificate_chain_file: "{{ httpd_ssl_certificate_file }}"
       httpd_copy_ssl_files: false
       httpd_ssl_cert_file_location: "/vagrant/certs/nexus.example.com.crt"
       httpd_ssl_cert_key_location: "/vagrant/certs/nexus.example.com.key"
@@ -203,5 +239,3 @@
         format: docker
         actions:
           - read
-
-   - cloudalchemy.prometheus

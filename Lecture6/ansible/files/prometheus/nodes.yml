@@ -1,0 +1,12 @@
+- targets: ['192.168.56.241:9100']
+  labels:
+    job: 'vm'
+    instance: vm1
+- targets: ['192.168.56.242:9100']
+  labels:
+    job: 'vm'
+    instance: vm2
+- targets: ['192.168.56.243:9100']
+  labels:
+    job: 'vm'
+    instance: vm3

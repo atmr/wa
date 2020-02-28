@@ -1,0 +1,8 @@
+---
+
+- name: Run the equivalent of "apt-get update" as a separate step
+  apt:
+    update_cache: yes
+
+- name: Install required system packages
+  apt: name=prometheus-node-exporter state=latest update_cache=yes

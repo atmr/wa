@@ -16,7 +16,6 @@ vagrant provision vm1
 
 mkdir -p certs
 ./ssl.sh
-cp -fr certs/* ansible/roles/ansible-thoteam.nexus3-oss/files/
 
 echo " ****************************************************************"
 echo " ******** 	[   Playbook launch   ] 		*******"
